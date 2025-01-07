@@ -3,7 +3,7 @@
 import { ref, onMounted, computed } from 'vue'
 
 const projects = ref([
-  {
+{
     id: 1,
     title: 'Now - Short Animation',
     description: 'Traditional Frame by Frame Animation inspired by Perfect Days.',
@@ -12,47 +12,62 @@ const projects = ref([
   },
   {
     id: 2,
+    title: 'Well - Short Animation',
+    description: 'Traditional Frame by Frame Animation + Runway Gen Turbo AI (Experimental).',
+    posterImage: '/images/well.png',
+    youtubeId: 'WE7KpbhNgRE'
+  },
+  {
+    id: 3,
     title: 'Oasi Meccanica - One Year Later',
     description: 'Midjourney + RunwayGen3 Project.',
     posterImage: '/images/building.png',
     youtubeId: 'JOucMxN4gEU'
   },
+
   {
-    id: 3,
+    id: 4,
+    title: 'Born - Very Short Animation',
+    description: 'Traditional Frame by Frame Animation (Learning Course Adobe Animate).',
+    posterImage: '/images/born.png',
+    youtubeId: 'Kwc8WceOHlQ'
+  },
+  {
+    id: 5,
     title: 'Ring of Fire',
     description: 'Midjourney + RunwayGen2 Project.',
     posterImage: '/images/cyborg.png',
     youtubeId: 'woDz7LheeGc'
   },
   {
-    id: 4,
+    id: 6,
     title: 'Letter To Human',
     description: 'Midjourney + RunwayGen2 + Pika + Eleven Lab Project.',
     posterImage: '/images/robot-yellow.png',
     youtubeId: '0YGF0MVKbvc'
   },
   {
-    id: 5,
+    id: 7,
     title: 'Visit Macondo [A Midjourney Experiment]',
     description: 'Midjourney V5 project.',
     posterImage: '/images/woman.png',
     youtubeId: 'whZD8iQOgFM'
   },
   {
-    id: 6,
+    id: 8,
     title: 'Tastless Chambella',
     description: 'Blender 3d project',
     posterImage: '/images/chambella.png'
   },
   {
-    id: 7,
+    id: 9,
     title: 'Famagosta - Music WebGame',
     description: 'Unity 3D WebGame.',
     posterImage: '/images/famagosta.png',
     youtubeId: 'cZKE2LGt6A0'
   },
   {
-    id: 7,
+    id: 10,
     title: 'D.O.A - Music Video',
     description: 'Final Cut Project',
     posterImage: '/images/doa.png',
