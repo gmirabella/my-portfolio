@@ -14,7 +14,7 @@ const projects = ref([
     id: 2,
     title: 'Well - Short Animation',
     description: 'Traditional Frame by Frame Animation + Runway Gen Turbo AI (Experimental).',
-    posterImage: '/images/well.png',
+    posterImage: '/images/well-1.png',
     youtubeId: 'WE7KpbhNgRE'
   },
   {
@@ -159,7 +159,7 @@ const toggleVideo = (projectId) => {
               <span class="terminal-text" data-text="LINKEDIN">LINKEDIN</span>
               <span class="terminal-plus">+</span>
             </a>
-            <a href="https://instagram.com/tuoprofilo" target="_blank" class="terminal-link">
+            <a href="https://www.instagram.com/gra_kub/" target="_blank" class="terminal-link">
               <span class="terminal-icon">></span>
               <span class="terminal-text" data-text="INSTAGRAM">INSTAGRAM</span>
               <span class="terminal-plus">+</span>
