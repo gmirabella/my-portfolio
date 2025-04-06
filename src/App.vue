@@ -2,7 +2,25 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 
+const handleMediaClick = (project) => {
+  console.log("Clicked project:", project.title)
+  if (!project.file) {
+    console.log("Toggling video for project ID:", project.id)
+    toggleVideo(project.id)
+  } else {
+    console.log("Project has a file, skipping toggle.")
+  }
+}
+
 const projects = ref([
+  {
+    id: 0,
+    title: 'Boring Day #1 - Comics',
+    description: 'Clip Studio Paint - Comic Course.',
+    posterImage: '/images/boring.png',
+    file: '/boring-day.jpg'
+    // link: 'https://www.webtoons.com/en/canvas/boring-day/boring-day/viewer?title_no=1040158&episode_no=1'
+  },
 {
     id: 1,
     title: 'Now - Short Animation',
@@ -121,28 +139,49 @@ const toggleVideo = (projectId) => {
             class="project-card"
           >
             <h2>{{ project.title }}</h2>
-            
-            <div 
-              class="media-container" 
-              @click="toggleVideo(project.id)"
-            >
-              <img 
-                v-if="!isVideoPlaying[project.id]" 
-                :src="project.posterImage" 
-                :alt="project.title"
-                class="poster-image"
-                loading="lazy"
+ 
+            <template v-if="project.file">
+              <div class="media-container">
+                <a 
+                  :href="project.file"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="video-frame"
+                >
+                  <img 
+                    :src="project.posterImage" 
+                    :alt="project.title" 
+                    class="poster-image"
+                  >
+                </a>
+              </div>
+            </template>
+ 
+            <template v-else>
+              <div 
+                class="media-container clickable"
+                @click="handleMediaClick(project)"
               >
-              <iframe 
-                v-else
-                :src="`https://www.youtube.com/embed/${project.youtubeId}`"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-                class="video-frame"
-              ></iframe>
-            </div>
-
+                <img 
+                  v-if="!isVideoPlaying[project.id]" 
+                  :src="project.posterImage" 
+                  :alt="project.title"
+                  class="poster-image"
+                  loading="lazy"
+                >
+                <iframe 
+                  v-else-if="project.youtubeId || project.link"
+                  :src="project.youtubeId 
+                    ? `https://www.youtube.com/embed/${project.youtubeId}` 
+                    : project.link"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  class="video-frame"
+                ></iframe>
+              </div>
+            </template>
+ 
             <p class="project-description">{{ project.description }}</p>
           </article>
         </div>
@@ -719,3 +758,10 @@ body,
   }
 }
 </style>
+/* Added clickable media-container styles */
+.media-container.clickable {
+  cursor: pointer;
+}
+.media-container:not(.clickable) {
+  cursor: default;
+}
