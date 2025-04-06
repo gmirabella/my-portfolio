@@ -121,7 +121,7 @@ const toggleVideo = (projectId) => {
         <div class="title-container">
           <h1 class="retro-title">/usr/grza/portfolio</h1>
           <p class="subtitle">
-            <span class="typing-text">Animating dreams.</span>
+            <span class="typing-text">Sketching dreams.</span>
             <span class="typing-text">Crafting code.</span>
             <span class="typing-text">Eternal writer.</span>
           </p>
