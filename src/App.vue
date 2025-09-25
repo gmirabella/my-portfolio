@@ -99,7 +99,7 @@ const isVideoPlaying = ref({})
 const pageSize = ref('0')
 const co2Emission = ref('0')
 
-// Theme toggle
+// Theme toggle (day | night)
 const isNight = ref(true)
 
 const applyTheme = (night) => {
@@ -528,11 +528,7 @@ body::after {
   transform: translateX(0);
   transition: transform 0.18s ease;
 }
-
-.theme-toggle.is-night .toggle-thumb {
-  transform: translateX(28px);
-  background: #f1f1f1;
-}
+.theme-toggle.is-night .toggle-thumb { transform: translateX(28px); background: #f1f1f1; }
 
 .theme-toggle .toggle-text {
   font-family: 'VT323', monospace;
@@ -554,17 +550,49 @@ body.theme-day {
   color: #000000;
 }
 
-body.theme-day::before,
-body.theme-day::after { display: none; }
+/* Keep patina + VHS overlays also in day mode, but adjust for light bg */
+body.theme-day::before {
+  background:
+    radial-gradient(ellipse at center, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.35) 100%),
+    linear-gradient(rgba(0,0,0,0.02), rgba(0,0,0,0.02));
+}
 
-body.theme-day .lowtech-container::before,
-body.theme-day .lowtech-container::after { display: none; }
+body.theme-day::after {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.08) 0px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.0) 2px,
+      rgba(0,0,0,0.0) 10px
+    ),
+    linear-gradient( to right, rgba(255,0,0,0.03), rgba(0,255,255,0.03) );
+  opacity: 0.18;
+}
+
+body.theme-day .lowtech-container::before {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.035) 0px,
+    rgba(0, 0, 0, 0.035) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  opacity: 0.18;
+}
+
+body.theme-day .lowtech-container::after {
+  background:
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.22) 100%),
+    radial-gradient(ellipse at 50% -20%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 45%);
+  opacity: 0.25;
+}
 
 body.theme-day .lowtech-container {
   background: #f4f0e5;
   border-left: 1px solid rgba(0,0,0,0.1);
   border-right: 1px solid rgba(0,0,0,0.1);
-  animation: none;
+  animation: vhs-warp 12s ease-in-out infinite;
 }
 
 /* Restore bitmap bg color to light */
@@ -596,6 +624,7 @@ body.theme-day .project-card {
   background: #f4f0e5;
   border: 2px solid #1a1a1a;
 }
+body.theme-day .project-card h2 { color: #000000; }
 
 body.theme-day .media-container { border: 3px solid #1a1a1a; }
 body.theme-day .sustainability-info { border-top: 1px solid rgba(26, 26, 26, 0.2); }
@@ -620,8 +649,28 @@ body,
 .project-card,
 .footer-container {
   background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Night background color application */
+body.theme-night,
+body.theme-night .header-container,
+body.theme-night .project-card,
+body.theme-night .footer-container {
   background-color: #000000;
 }
+
+/* Ensure toggle stays fixed and readable in day */
+body.theme-day .theme-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: rgba(255,255,255,0.85);
+  border-color: rgba(0,0,0,0.25);
+}
+
+body.theme-day .theme-toggle .toggle-text { color: #000000; }
+body.theme-day .theme-toggle .toggle-track { background: #eae7d8; border-color: rgba(0,0,0,0.3); }
+body.theme-day .theme-toggle .toggle-thumb { background: #ffffff; border-color: #bdbdbd; }
 
 .project-card h2 {
   font-family: 'Press Start 2P', monospace;
