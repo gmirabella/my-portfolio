@@ -111,6 +111,7 @@ const toggleVideo = (projectId: number) => {
             </template>
  
             <p class="project-description">{{ project.description }}</p>
+            <p class="project-tools">{{ project.tools }}</p>
           </article>
         </div>
       </div>
