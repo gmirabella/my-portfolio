@@ -24,14 +24,16 @@ const projects = ref([
 {
     id: 1,
     title: 'Now - Short Animation',
-    description: 'Traditional Frame by Frame Animation inspired by Perfect Days.',
+    description: 'System Report: Traditional Frame by Frame Animation inspired by Wim Wenders\'s film Perfect Days.',
+    tools: 'Tools: Clip Studio Paint, Hand drawing, Chai tea',
     posterImage: '/images/now.png',
     youtubeId: '99q9iHmjKlM'
   },
   {
     id: 2,
     title: 'Well - Short Animation',
-    description: 'Traditional Frame by Frame Animation + Runway Gen Turbo AI (Experimental).',
+    description: 'Traditional Frame by Frame Animation Experimental.',
+    tools: 'Tools: Flipaclip, Hand drawing, Runway Gen Turbo AI',
     posterImage: '/images/well-1.png',
     youtubeId: 'WE7KpbhNgRE'
   },
@@ -97,6 +99,26 @@ const isVideoPlaying = ref({})
 const pageSize = ref('0')
 const co2Emission = ref('0')
 
+// Theme toggle
+const isNight = ref(true)
+
+const applyTheme = (night) => {
+  const body = document.body
+  if (night) {
+    body.classList.add('theme-night')
+    body.classList.remove('theme-day')
+  } else {
+    body.classList.add('theme-day')
+    body.classList.remove('theme-night')
+  }
+}
+
+const toggleTheme = () => {
+  isNight.value = !isNight.value
+  applyTheme(isNight.value)
+  try { localStorage.setItem('theme', isNight.value ? 'night' : 'day') } catch (e) {}
+}
+
 const calculateCO2 = (size) => {
   return (size * 0.2).toFixed(2)
 }
@@ -106,6 +128,14 @@ onMounted(() => {
   const blob = new Blob([pageContent], { type: 'text/html' })
   pageSize.value = Math.round(blob.size / 1024)
   co2Emission.value = calculateCO2(pageSize.value)
+
+  try {
+    const saved = localStorage.getItem('theme')
+    isNight.value = saved ? saved === 'night' : true
+  } catch (e) {
+    isNight.value = true
+  }
+  applyTheme(isNight.value)
 })
 
 const toggleVideo = (projectId) => {
@@ -115,6 +145,14 @@ const toggleVideo = (projectId) => {
 
 <template>
   <div class="lowtech-container">
+    <button class="theme-toggle" :class="{ 'is-night': isNight }" @click="toggleTheme" aria-label="Toggle theme">
+      <span class="toggle-track"><span class="toggle-thumb"></span></span>
+      <span class="toggle-text">
+        <span class="label-day">DAY</span>
+        <span class="sep">|</span>
+        <span class="label-night">NIGHT</span>
+      </span>
+    </button>
     <!-- Header con nav -->
     <header class="header-container">
       <div class="header-content">
@@ -123,7 +161,6 @@ const toggleVideo = (projectId) => {
           <p class="subtitle">
             <span class="typing-text">Sketching dreams.</span>
             <span class="typing-text">Crafting code.</span>
-            <span class="typing-text">Eternal writer.</span>
           </p>
         </div>
       </div>
@@ -246,21 +283,73 @@ const toggleVideo = (projectId) => {
 body {
   font-family: 'VT323', monospace;
   line-height: 1.6;
-  background: #f4f0e5;
-  color: #1a1a1a;
+  background: #000000;
+  color: #ffffff;
   min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse at center, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.6) 100%),
+    linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02));
+  backdrop-filter: blur(0.2px) saturate(85%);
+}
+
+/* VHS global overlay */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1000;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.10) 0px,
+      rgba(255,255,255,0.10) 2px,
+      rgba(0,0,0,0.0) 2px,
+      rgba(0,0,0,0.0) 10px
+    ),
+    linear-gradient( to right, rgba(255,0,0,0.03), rgba(0,255,255,0.03) );
+  opacity: 0.45;
+  animation: vhs-roll 4s linear infinite, vhs-jitter 6s steps(60,end) infinite;
+}
+
+@keyframes vhs-roll {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 0 200vh, 0 0; }
+}
+
+@keyframes vhs-jitter {
+  0%, 5% { transform: translateX(0) skewX(0deg); }
+  6% { transform: translateX(0.6px) skewX(0.2deg); }
+  7% { transform: translateX(-0.6px) skewX(-0.2deg); }
+  8%, 100% { transform: translateX(0) skewX(0deg); }
 }
 
 /* CRT Effect */
 .lowtech-container {
   min-height: 100vh;
-  background: #f4f0e5;
+  background: #000000;
   position: relative;
   width: 80%;
   margin: 0 auto;
-  border-left: 1px solid rgba(0,0,0,0.1);
-  border-right: 1px solid rgba(0,0,0,0.1);
+  border-left: 1px solid rgba(255,255,255,0.15);
+  border-right: 1px solid rgba(255,255,255,0.15);
   overflow: hidden;
+  animation: vhs-warp 12s ease-in-out infinite;
 }
 
 .lowtech-container::before {
@@ -273,15 +362,15 @@ body {
   bottom: 0;
   background: repeating-linear-gradient(
     0deg,
-    rgba(0, 0, 0, 0.03) 0px,
-    rgba(0, 0, 0, 0.03) 1px,
+    rgba(255, 255, 255, 0.02) 0px,
+    rgba(255, 255, 255, 0.02) 1px,
     transparent 1px,
     transparent 2px
   );
   pointer-events: none;
   z-index: 10;
-  animation: scanline 10s linear infinite;
-  opacity: 0.3;
+  animation: scanline 8s linear infinite;
+  opacity: 0.45;
 }
 
 .lowtech-container::after {
@@ -292,14 +381,12 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(
-    circle at center,
-    transparent 0%,
-    rgba(0, 0, 0, 0.1) 100%
-  );
+  background:
+    radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%),
+    radial-gradient(ellipse at 50% -20%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 45%);
   pointer-events: none;
   z-index: 9;
-  opacity: 0.3;
+  opacity: 0.55;
 }
 
 @keyframes scanline {
@@ -311,12 +398,20 @@ body {
   }
 }
 
+@keyframes vhs-warp {
+  0% { transform: none; filter: brightness(0.98) contrast(0.98); }
+  25% { transform: skewX(0.15deg) skewY(0.05deg); }
+  50% { transform: skewX(-0.2deg) skewY(-0.05deg); filter: brightness(0.96) contrast(0.97); }
+  75% { transform: skewX(0.1deg) skewY(-0.03deg); }
+  100% { transform: none; filter: brightness(0.98) contrast(0.98); }
+}
+
 /* Header styles */
 .header-container {
   width: 100%;
-  border-bottom: 2px dashed #1a1a1a;
+  border-bottom: 2px dashed rgba(255,255,255,0.8);
   padding: 2rem;
-  background: #f4f0e5;
+  background: #000000;
   text-align: center;
 }
 
@@ -340,7 +435,7 @@ body {
 .retro-title {
   font-family: 'VT323', monospace;
   font-size: 5em;
-  color: #1a1a1a;
+  color: #ffffff;
   letter-spacing: 1px;
   position: relative;
 }
@@ -349,7 +444,7 @@ body {
   display: inline-block;
   width: 12px;
   height: 24px;
-  background: #1a1a1a;
+  background: #ffffff;
   margin-left: 4px;
   animation: blink 1s step-start infinite;
 }
@@ -370,7 +465,7 @@ body {
 .typing-text {
   display: inline-block;
   overflow: hidden;
-  border-right: 2px solid #1a1919;
+  border-right: 2px solid #ffffff;
   white-space: nowrap;
   animation: typing 3.5s steps(40, end),
              blink-caret 0.75s step-end infinite;
@@ -395,6 +490,117 @@ body {
   50% { border-color: #1a1a1a }
 }
 
+/* Day/Night toggle button */
+.theme-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1100;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.theme-toggle .toggle-track {
+  position: relative;
+  width: 54px;
+  height: 22px;
+  background: #0f0f0f;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+}
+
+.theme-toggle .toggle-thumb {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 24px;
+  height: 18px;
+  background: #dcdcdc;
+  border: 1px solid #999;
+  border-radius: 2px;
+  transform: translateX(0);
+  transition: transform 0.18s ease;
+}
+
+.theme-toggle.is-night .toggle-thumb {
+  transform: translateX(28px);
+  background: #f1f1f1;
+}
+
+.theme-toggle .toggle-text {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+.theme-toggle .toggle-text .label-day { opacity: 0.6; }
+.theme-toggle .toggle-text .label-night { opacity: 1; }
+.theme-toggle .toggle-text .sep { opacity: 0.5; margin: 0 4px; }
+
+.theme-toggle:is(.is-night) .toggle-text .label-day { opacity: 0.6; }
+.theme-toggle:is(:not(.is-night)) .toggle-text .label-night { opacity: 0.6; }
+
+/* Day theme overrides (restore original light look) */
+body.theme-day {
+  background: #f8f7e9;
+  color: #000000;
+}
+
+body.theme-day::before,
+body.theme-day::after { display: none; }
+
+body.theme-day .lowtech-container::before,
+body.theme-day .lowtech-container::after { display: none; }
+
+body.theme-day .lowtech-container {
+  background: #f4f0e5;
+  border-left: 1px solid rgba(0,0,0,0.1);
+  border-right: 1px solid rgba(0,0,0,0.1);
+  animation: none;
+}
+
+/* Restore bitmap bg color to light */
+body.theme-day,
+body.theme-day .header-container,
+body.theme-day .project-card,
+body.theme-day .footer-container {
+  background-color: #f4f0e5;
+}
+
+body.theme-day .header-container {
+  border-bottom: 2px dashed #1a1a1a;
+}
+
+body.theme-day .footer-container {
+  border-top: 2px dashed #1a1a1a;
+}
+
+body.theme-day .retro-title { color: #1a1a1a; }
+body.theme-day .typing-text { border-right-color: #1a1a1a; }
+body.theme-day .cursor { background: #1a1a1a; }
+
+body.theme-day .terminal-link { color: #1a1a1a; }
+body.theme-day .terminal-link:hover { background: rgba(0,0,0,0.05); }
+body.theme-day .terminal-text::before,
+body.theme-day .terminal-text::after { color: #1a1a1a; background: #f4f0e5; }
+
+body.theme-day .project-card {
+  background: #f4f0e5;
+  border: 2px solid #1a1a1a;
+}
+
+body.theme-day .media-container { border: 3px solid #1a1a1a; }
+body.theme-day .sustainability-info { border-top: 1px solid rgba(26, 26, 26, 0.2); }
+body.theme-day .tech-info { color: #666; }
+
 /* Projects Grid */
 .projects-container {
   width: 100%;
@@ -414,7 +620,7 @@ body,
 .project-card,
 .footer-container {
   background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
-  background-color: #f4f0e5;
+  background-color: #000000;
 }
 
 .project-card h2 {
@@ -436,7 +642,7 @@ body,
 .media-container {
   margin: 1rem 0;
   cursor: pointer;
-  border: 3px solid #1a1a1a;
+  border: 3px solid rgba(255,255,255,0.8);
   /* filter: grayscale(100%) contrast(1.2); */
 }
 
@@ -452,8 +658,8 @@ body,
 .footer-container {
   width: 100%;
   padding: 2rem;
-  background: #f4f0e5;
-  border-top: 2px dashed #1a1a1a;
+  background: #000000;
+  border-top: 2px dashed rgba(255,255,255,0.8);
   margin-top: 2rem;
 }
 
@@ -480,7 +686,7 @@ body,
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #1a1a1a;
+  color: #ffffff;
   text-decoration: none;
   font-family: 'VT323', monospace;
   font-size: 1.1em;
@@ -506,8 +712,8 @@ body,
   left: -2px;
   text-shadow: 2px 0 #ff0000;
   top: 0;
-  color: #1a1a1a;
-  background: #f4f0e5;
+  color: #ffffff;
+  background: #000000;
   overflow: hidden;
   clip: rect(0, 900px, 0, 0);
   animation: noise-anim-2 3s infinite linear alternate-reverse;
@@ -519,8 +725,8 @@ body,
   left: 2px;
   text-shadow: -2px 0 #00ff00;
   top: 0;
-  color: #1a1a1a;
-  background: #f4f0e5;
+  color: #ffffff;
+  background: #000000;
   overflow: hidden;
   clip: rect(0, 900px, 0, 0);
   animation: noise-anim 2s infinite linear alternate-reverse;
@@ -533,7 +739,7 @@ body,
 }
 
 .terminal-link:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .terminal-link:hover .terminal-plus {
@@ -701,14 +907,14 @@ body,
 .sustainability-info {
   text-align: center;
   font-family: 'VT323', monospace;
-  border-top: 1px solid rgba(26, 26, 26, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding-top: 0.5rem;
   width: 100%;
 }
 
 .tech-info {
   font-size: 0.8em;
-  color: #666;
+  color: #aaaaaa;
   margin: 0 0.5rem;
 }
 
