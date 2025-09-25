@@ -19,27 +19,16 @@ const handleMediaClick = (project: Project) => {
 
 const projects = ref<Project[]>(projectsData)
 
-const isVideoPlaying = ref({})
-const pageSize = ref('0')
-const co2Emission = ref('0')
+const isVideoPlaying = ref<Record<number, boolean>>({})
 
 // Theme toggle via composable
-const { isNight, toggleTheme, applyTheme } = useTheme()
-
-const calculateCO2 = (size) => {
-  return (size * 0.2).toFixed(2)
-}
+const { isNight, toggleTheme } = useTheme()
 
 onMounted(() => {
-  const pageContent = document.documentElement.innerHTML
-  const blob = new Blob([pageContent], { type: 'text/html' })
-  pageSize.value = Math.round(blob.size / 1024)
-  co2Emission.value = calculateCO2(pageSize.value)
-
   // Theme initialization handled inside useTheme composable
 })
 
-const toggleVideo = (projectId) => {
+const toggleVideo = (projectId: number) => {
   isVideoPlaying.value[projectId] = !isVideoPlaying.value[projectId]
 }
 </script>
@@ -61,7 +50,8 @@ const toggleVideo = (projectId) => {
           <h1 class="retro-title">/usr/grza/portfolio</h1>
           <p class="subtitle">
             <span class="typing-text">Sketching dreams.</span>
-            <span class="typing-text">Crafting code.</span>
+            <span class="typing-text">Crafting code.</span> 
+            <span class="typing-text">Learning things.</span>
           </p>
         </div>
       </div>
@@ -133,8 +123,7 @@ const toggleVideo = (projectId) => {
         
         <div class="sustainability-info">
           <small>
-            <span class="tech-info">Page size: {{ pageSize }} KB</span>
-            <span class="tech-info">Estimated CO2: {{ co2Emission }}g</span>
+            <!-- Sustainability info removed -->
           </small>
         </div>
       </div>
