@@ -9,21 +9,29 @@ import FooterLinks from './components/FooterLinks.vue'
 // Handle click on media: if no local file, toggle embedded video
 const handleMediaClick = (project: Project) => {
   console.log("Clicked project:", project.title)
+  console.log("Project has file:", !!project.file)
+  console.log("Project has youtubeId:", !!project.youtubeId)
+  console.log("Project has videoFile:", !!project.videoFile)
+  
   if (project.file) {
     // Open the file in a new tab
+    console.log("Opening file:", project.file)
     window.open(project.file, '_blank')
+  } else if (project.youtubeId || project.link) {
+    // For YouTube videos, open YouTube directly
+    const youtubeUrl = project.youtubeId 
+      ? `https://www.youtube.com/watch?v=${project.youtubeId}`
+      : project.link
+    console.log("Opening YouTube:", youtubeUrl)
+    window.open(youtubeUrl, '_blank')
   } else if (project.videoFile) {
-    // For video files, open the video file in a new tab
+    // For video files without YouTube, open the video file in a new tab
+    console.log("Opening video file:", project.videoFile)
     window.open(project.videoFile, '_blank')
-  } else {
-    console.log("Toggling video for project ID:", project.id)
-    toggleVideo(project.id)
   }
 }
 
 const projects = ref<Project[]>(projectsData)
-
-const isVideoPlaying = ref<Record<number, boolean>>({})
 
 // Theme toggle via composable
 const { isNight, toggleTheme } = useTheme()
@@ -31,10 +39,6 @@ const { isNight, toggleTheme } = useTheme()
 onMounted(() => {
   // Theme initialization handled inside useTheme composable
 })
-
-const toggleVideo = (projectId: number) => {
-  isVideoPlaying.value[projectId] = !isVideoPlaying.value[projectId]
-}
 </script>
 
 <template>
@@ -103,28 +107,17 @@ const toggleVideo = (projectId: number) => {
                   muted
                   playsinline
                   class="video-frame"
+                  @click="handleMediaClick(project)"
                 ></video>
                 
                 <!-- Poster image for other projects -->
                 <img 
-                  v-else-if="!isVideoPlaying[project.id] && project.posterImage" 
+                  v-else-if="project.posterImage" 
                   :src="project.posterImage" 
                   :alt="project.title"
                   class="poster-image"
                   loading="lazy"
                 >
-                
-                <!-- YouTube iframe -->
-                <iframe 
-                  v-else-if="project.youtubeId || project.link"
-                  :src="project.youtubeId 
-                    ? `https://www.youtube.com/embed/${project.youtubeId}` 
-                    : project.link"
-                  frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
-                  class="video-frame"
-                ></iframe>
               </div>
             </template>
  
