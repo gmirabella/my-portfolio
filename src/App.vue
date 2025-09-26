@@ -9,11 +9,15 @@ import FooterLinks from './components/FooterLinks.vue'
 // Handle click on media: if no local file, toggle embedded video
 const handleMediaClick = (project: Project) => {
   console.log("Clicked project:", project.title)
-  if (!project.file) {
+  if (project.file) {
+    // Open the file in a new tab
+    window.open(project.file, '_blank')
+  } else if (project.videoFile) {
+    // For video files, open the video file in a new tab
+    window.open(project.videoFile, '_blank')
+  } else {
     console.log("Toggling video for project ID:", project.id)
     toggleVideo(project.id)
-  } else {
-    console.log("Project has a file, skipping toggle.")
   }
 }
 
@@ -47,7 +51,7 @@ const toggleVideo = (projectId: number) => {
     <header class="header-container">
       <div class="header-content">
         <div class="title-container">
-          <h1 class="retro-title">/usr/grza/portfolio</h1>
+          <h1 class="retro-title">/usr/grza/website</h1>
           <p class="subtitle">
             <span class="typing-text">Sketching dreams.</span>
             <span class="typing-text">Crafting code.</span> 
@@ -68,7 +72,7 @@ const toggleVideo = (projectId: number) => {
           >
             <h2>{{ project.title }}</h2>
  
-            <template v-if="project.file">
+            <template v-if="project.file && !project.videoFile">
               <div class="media-container">
                 <a 
                   :href="project.file"
@@ -84,19 +88,33 @@ const toggleVideo = (projectId: number) => {
                 </a>
               </div>
             </template>
- 
+
             <template v-else>
               <div 
                 class="media-container clickable"
                 @click="handleMediaClick(project)"
               >
+                <!-- Video file with autoplay and loop -->
+                <video 
+                  v-if="project.videoFile"
+                  :src="project.videoFile"
+                  autoplay
+                  loop
+                  muted
+                  playsinline
+                  class="video-frame"
+                ></video>
+                
+                <!-- Poster image for other projects -->
                 <img 
-                  v-if="!isVideoPlaying[project.id]" 
+                  v-else-if="!isVideoPlaying[project.id] && project.posterImage" 
                   :src="project.posterImage" 
                   :alt="project.title"
                   class="poster-image"
                   loading="lazy"
                 >
+                
+                <!-- YouTube iframe -->
                 <iframe 
                   v-else-if="project.youtubeId || project.link"
                   :src="project.youtubeId 
@@ -122,11 +140,6 @@ const toggleVideo = (projectId: number) => {
       <div class="footer-content">
         <FooterLinks />
         
-        <div class="sustainability-info">
-          <small>
-            <!-- Sustainability info removed -->
-          </small>
-        </div>
       </div>
     </footer>
   </div>
