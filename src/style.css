@@ -44,13 +44,13 @@ body::after {
   background:
     repeating-linear-gradient(
       0deg,
-      rgba(255,255,255,0.08) 0px,
-      rgba(255,255,255,0.08) 2px,
+      rgba(255,255,255,0.12) 0px,
+      rgba(255,255,255,0.12) 2px,
       rgba(0,0,0,0.0) 2px,
       rgba(0,0,0,0.0) 10px
     ),
     linear-gradient( to right, rgba(255,0,0,0.03), rgba(0,255,255,0.03) );
-  opacity: 0.4;
+  opacity: 0.6;
   animation: vhs-roll 4s linear infinite, vhs-jitter 6s steps(60,end) infinite;
 }
 
@@ -473,7 +473,7 @@ body.theme-day::after {
 }
 body.theme-day .lowtech-container::before { background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.035) 0px, rgba(0, 0, 0, 0.035) 1px, transparent 1px, transparent 2px); opacity: 0.18; }
 body.theme-day .lowtech-container::after { background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.22) 100%), radial-gradient(ellipse at 50% -20%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 45%); opacity: 0.25; }
-body.theme-day .lowtech-container { background: #f4f0e5; border-left: 1px solid rgba(0,0,0,0.1); border-right: 1px solid rgba(0,0,0,0.1); animation: vhs-warp 12s ease-in-out infinite; }
+body.theme-day .lowtech-container { background: #f4f0e5; border-left: 1px solid rgba(0,0,0,0.1); border-right: 1px solid rgba(0,0,0,0.1); }
 body.theme-day, body.theme-day .header-container, body.theme-day .project-card, body.theme-day .footer-container { background-color: #f4f0e5; }
 body.theme-day .header-container { border-bottom: 2px dashed #1a1a1a; }
 body.theme-day .footer-container { border-top: 2px dashed #1a1a1a; }
