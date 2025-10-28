@@ -73,26 +73,6 @@ test.describe('Example Test Suite', () => {
 });
 
 /**
- * Useful Playwright Commands:
- * 
- * Run all tests:
- *   npm test
- * 
- * Run tests in UI mode (interactive):
- *   npm run test:ui
- * 
- * Run tests in headed mode (see browser):
- *   npm run test:headed
- * 
- * Run tests in debug mode:
- *   npm run test:debug
- * 
- * Run specific test file:
- *   npx playwright test example.spec.ts
- * 
- * Run tests matching a pattern:
- *   npx playwright test --grep "example test"
- * 
- * Generate code with Playwright codegen:
- *   npx playwright codegen http://localhost:5173
+ * For more information about running tests and available commands,
+ * see tests/README.md
  */
