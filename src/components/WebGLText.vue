@@ -2,9 +2,6 @@
   <div class="webgl-container" ref="container">
     <canvas ref="canvas" class="webgl-canvas"></canvas>
     
-    <!-- Lottie Animation Container -->
-    <div class="lottie-container" ref="lottieContainer"></div>
-    
     <div class="text-overlay" ref="textOverlay">
       <h1 class="glitch-text" @mouseenter="startGlitch" @mouseleave="stopGlitch">
         ENTER THE DIGITAL REALM
@@ -16,12 +13,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import * as THREE from 'three'
-import lottie from 'lottie-web'
 
 const container = ref<HTMLDivElement>()
 const canvas = ref<HTMLCanvasElement>()
 const textOverlay = ref<HTMLDivElement>()
-const lottieContainer = ref<HTMLDivElement>()
 
 let scene: THREE.Scene
 let camera: THREE.PerspectiveCamera
@@ -30,11 +25,6 @@ let material: THREE.ShaderMaterial
 let geometry: THREE.PlaneGeometry
 let mesh: THREE.Mesh
 let animationId: number
-let isGlitching = false
-
-// Lottie variables
-let lottieAnimation: any = null
-let lottieData: any = null
 
 // Vertex shader for dithering effect
 const vertexShader = `
@@ -45,13 +35,11 @@ const vertexShader = `
   }
 `
 
-// Fragment shader with dithering, glitch effects and Lottie integration
+// Fragment shader with dithering and glitch effects
 const fragmentShader = `
   uniform float time;
   uniform float glitchIntensity;
   uniform vec2 resolution;
-  uniform sampler2D lottieTexture;
-  uniform float lottieOpacity;
   varying vec2 vUv;
   
   // Dithering function
@@ -75,9 +63,6 @@ const fragmentShader = `
     // Apply glitch distortion
     uv = glitch(uv, time);
     
-    // Sample Lottie texture
-    vec4 lottieColor = texture2D(lottieTexture, uv);
-    
     // Create text-like pattern
     vec2 center = vec2(0.5, 0.5);
     float dist = distance(uv, center);
@@ -87,21 +72,17 @@ const fragmentShader = `
     float dither = dither(uv, time);
     text *= dither;
     
-    // Mix Lottie with text pattern
-    float lottieMask = lottieColor.a * lottieOpacity;
-    text = mix(text, lottieMask, lottieMask * 0.5);
-    
     // Add color channels with slight offset for RGB separation
-    float r = text + lottieColor.r * lottieMask;
-    float g = text * (1.0 + sin(time * 2.0) * 0.1) + lottieColor.g * lottieMask;
-    float b = text * (1.0 + sin(time * 3.0) * 0.1) + lottieColor.b * lottieMask;
+    float r = text;
+    float g = text * (1.0 + sin(time * 2.0) * 0.1);
+    float b = text * (1.0 + sin(time * 3.0) * 0.1);
     
     // Add scanlines
     float scanline = sin(uv.y * 200.0) * 0.1 + 0.9;
     
     vec3 color = vec3(r, g, b) * scanline;
     
-    gl_FragColor = vec4(color, max(text, lottieMask));
+    gl_FragColor = vec4(color, text);
   }
 `
 
@@ -127,9 +108,7 @@ const initWebGL = () => {
     uniforms: {
       time: { value: 0 },
       glitchIntensity: { value: 0 },
-      resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-      lottieTexture: { value: new THREE.Texture() },
-      lottieOpacity: { value: 0.0 }
+      resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
     },
     transparent: true
   })
@@ -152,41 +131,15 @@ const animate = () => {
   renderer.render(scene, camera)
 }
 
-const initLottie = () => {
-  if (!lottieContainer.value) return
-  
-  // Initialize Lottie animation
-  lottieAnimation = lottie.loadAnimation({
-    container: lottieContainer.value,
-    renderer: 'canvas',
-    loop: true,
-    autoplay: true,
-    path: '/src/assets/dog-medusa.lottie'
-  })
-  
-  // Create texture from Lottie canvas
-  const canvas = lottieContainer.value.querySelector('canvas')
-  if (canvas && material) {
-    const texture = new THREE.CanvasTexture(canvas)
-    texture.needsUpdate = true
-    material.uniforms.lottieTexture.value = texture
-    material.uniforms.lottieOpacity.value = 1.0
-  }
-}
-
 const startGlitch = () => {
-  isGlitching = true
   if (material) {
     material.uniforms.glitchIntensity.value = 1.0
-    material.uniforms.lottieOpacity.value = 0.8
   }
 }
 
 const stopGlitch = () => {
-  isGlitching = false
   if (material) {
     material.uniforms.glitchIntensity.value = 0.0
-    material.uniforms.lottieOpacity.value = 1.0
   }
 }
 
@@ -204,7 +157,6 @@ const handleResize = () => {
 
 onMounted(() => {
   initWebGL()
-  initLottie()
   animate()
   window.addEventListener('resize', handleResize)
 })
@@ -214,10 +166,6 @@ onUnmounted(() => {
     cancelAnimationFrame(animationId)
   }
   window.removeEventListener('resize', handleResize)
-  
-  if (lottieAnimation) {
-    lottieAnimation.destroy()
-  }
   
   if (renderer) {
     renderer.dispose()
@@ -246,17 +194,6 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   z-index: 1;
-}
-
-.lottie-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .text-overlay {

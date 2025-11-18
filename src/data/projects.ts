@@ -8,6 +8,7 @@ export type Project = {
   youtubeId?: string;
   file?: string;
   link?: string;
+  route?: string;
 };
 
 export const projects: Project[] = [

@@ -3,8 +3,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import './style.css'
 import App from './App.vue'
 import Portfolio from './components/Portfolio.vue'
-import CapitalismSimulator from './components/CapitalismSimulator.vue'
-import CapitalistRealismRPG from './components/CapitalistRealismRPG.vue'
 
 const routes = [
   {
@@ -13,11 +11,11 @@ const routes = [
   },
   {
     path: '/capitalism-simulator',
-    component: CapitalismSimulator,
+    component: () => import('./components/CapitalismSimulator.vue'),
   },
   {
     path: '/capitalist-realism-rpg',
-    component: CapitalistRealismRPG,
+    component: () => import('./components/CapitalistRealismRPG.vue'),
   },
 ]
 
