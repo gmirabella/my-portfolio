@@ -12,6 +12,14 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    id: 12,
+    title: 'Capitalism Simulator',
+    description: "A role-playing prototype about capitalism's quirks, choices, and consequences. I'll probably never ship it — but the idea keeps respawning.",
+    tools: 'Tools: Claude Artifacts, HTML, CSS, JavaScript',
+    videoFile: '/images/capitalism.mp4',
+    route: '/capitalism-simulator',
+  },
+  {
     id: 0,
     title: 'Now - Short Animation',
     description:"A contemplative traditional frame-by-frame animation inspired by Wim Wenders's film Perfect Days.",

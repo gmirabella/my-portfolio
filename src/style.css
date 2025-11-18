@@ -31,40 +31,7 @@ body::before {
   background: transparent;
 }
 
-/* VHS global overlay */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 1000;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      rgba(255,255,255,0.12) 0px,
-      rgba(255,255,255,0.12) 2px,
-      rgba(0,0,0,0.0) 2px,
-      rgba(0,0,0,0.0) 10px
-    ),
-    linear-gradient( to right, rgba(255,0,0,0.03), rgba(0,255,255,0.03) );
-  opacity: 0.6;
-  animation: vhs-roll 4s linear infinite, vhs-jitter 6s steps(60,end) infinite;
-}
-
-@keyframes vhs-roll {
-  0% { background-position: 0 0, 0 0; }
-  100% { background-position: 0 200vh, 0 0; }
-}
-
-@keyframes vhs-jitter {
-  0%, 5% { transform: translateX(0) skewX(0deg); }
-  6% { transform: translateX(0.6px) skewX(0.2deg); }
-  7% { transform: translateX(-0.6px) skewX(-0.2deg); }
-  8%, 100% { transform: translateX(0) skewX(0deg); }
-}
+/* VHS global overlay - removed */
 
 /* Container styles */
 .lowtech-container {
@@ -218,6 +185,39 @@ body::after {
   object-fit: cover;
 }
 
+.route-placeholder {
+  width: 100%;
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'VT323', monospace;
+  font-size: 1.5em;
+  letter-spacing: 2px;
+  transition: all 0.2s ease;
+}
+
+.route-placeholder:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 1);
+}
+
+body.theme-day .route-placeholder {
+  background: rgba(26, 26, 26, 0.05);
+  border-color: rgba(26, 26, 26, 0.3);
+  color: rgba(26, 26, 26, 0.7);
+}
+
+body.theme-day .route-placeholder:hover {
+  background: rgba(26, 26, 26, 0.1);
+  border-color: rgba(26, 26, 26, 0.6);
+  color: rgba(26, 26, 26, 1);
+}
+
 /* Footer styles */
 .footer-container {
   width: 100%;
@@ -277,55 +277,7 @@ body::after {
 
 /* ===== Moved from App.vue (global + component styles) ===== */
 
-.lowtech-container::before {
-  content: "";
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0.02) 0px,
-    rgba(255, 255, 255, 0.02) 1px,
-    transparent 1px,
-    transparent 2px
-  );
-  pointer-events: none;
-  z-index: 10;
-  animation: scanline 8s linear infinite;
-  opacity: 0.45;
-}
-
-.lowtech-container::after {
-  content: "";
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%),
-    radial-gradient(ellipse at 50% -20%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 45%);
-  pointer-events: none;
-  z-index: 9;
-  opacity: 0.55;
-}
-
-@keyframes scanline {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(100vh); }
-}
-
-@keyframes vhs-warp {
-  0% { transform: none; filter: brightness(0.98) contrast(0.98); }
-  25% { transform: skewX(0.15deg) skewY(0.05deg); }
-  50% { transform: skewX(-0.2deg) skewY(-0.05deg); filter: brightness(0.96) contrast(0.97); }
-  75% { transform: skewX(0.1deg) skewY(-0.03deg); }
-  100% { transform: none; filter: brightness(0.98) contrast(0.98); }
-}
+/* VHS effects removed */
 
 /* Header styles */
 .header-container { width: 100%; border-bottom: 2px dashed rgba(255,255,255,0.8); padding: 2rem; background: #000000; text-align: center; }
@@ -458,21 +410,8 @@ body::after {
 /* Day theme overrides */
 body.theme-day { background: #f8f7e9; color: #000000; }
 body.theme-day::before { background: transparent; }
-body.theme-day::after { 
-  background: 
-    repeating-linear-gradient(
-      0deg,
-      rgba(0,0,0,0.08) 0px,
-      rgba(0,0,0,0.08) 2px,
-      rgba(0,0,0,0.0) 2px,
-      rgba(0,0,0,0.0) 10px
-    ),
-    linear-gradient( to right, rgba(255,0,0,0.03), rgba(0,255,255,0.03) ); 
-  opacity: 0.4; 
-  animation: vhs-roll 4s linear infinite, vhs-jitter 6s steps(60,end) infinite;
-}
-body.theme-day .lowtech-container::before { background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.035) 0px, rgba(0, 0, 0, 0.035) 1px, transparent 1px, transparent 2px); opacity: 0.18; }
-body.theme-day .lowtech-container::after { background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.22) 100%), radial-gradient(ellipse at 50% -20%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 45%); opacity: 0.25; }
+body.theme-day::after { background: transparent; }
+/* VHS effects removed for day theme */
 body.theme-day .lowtech-container { background: #f4f0e5; border-left: 1px solid rgba(0,0,0,0.1); border-right: 1px solid rgba(0,0,0,0.1); }
 body.theme-day, body.theme-day .header-container, body.theme-day .project-card, body.theme-day .footer-container { background-color: #f4f0e5; }
 body.theme-day .header-container { border-bottom: 2px dashed #1a1a1a; }
