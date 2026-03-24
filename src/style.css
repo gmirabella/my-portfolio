@@ -1,12 +1,54 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
 
-/* Reset CSS */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-style: normal;
+/* CSS Layers for better organization */
+@layer reset, theme, components, animations, utilities;
+
+@layer reset {
+  /* Reset CSS */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-style: normal;
+  }
+}
+
+@layer theme {
+  :root {
+    /* Modern OKLCH colors (with hex fallbacks) */
+    --color-bg-night: #000000;
+    --color-bg-night-oklch: oklch(10% 0 0);
+    --color-text-night: #ffffff;
+    --color-text-night-oklch: oklch(100% 0 0);
+    --color-green-retro: #00ff00;
+    --color-green-retro-oklch: oklch(70% 0.25 145);
+    --color-red-glitch: #ff0000;
+    --color-red-glitch-oklch: oklch(60% 0.25 25);
+  }
+
+  @supports (color: oklch(0% 0 0)) {
+    :root {
+      --color-bg-night: var(--color-bg-night-oklch);
+      --color-text-night: var(--color-text-night-oklch);
+      --color-green-retro: var(--color-green-retro-oklch);
+      --color-red-glitch: var(--color-red-glitch-oklch);
+    }
+  }
+
+  body.theme-day {
+    --color-bg-day: #f5f5f5;
+    --color-bg-day-oklch: oklch(95% 0.02 85);
+    --color-text-day: #1a1a1a;
+    --color-text-day-oklch: oklch(15% 0 0);
+  }
+
+  @supports (color: oklch(0% 0 0)) {
+    body.theme-day {
+      --color-bg-day: var(--color-bg-day-oklch);
+      --color-text-day: var(--color-text-day-oklch);
+    }
+  }
 }
 
 /* Base styles */
@@ -48,8 +90,8 @@ body::before {
 /* Header styles */
 .header-container {
   width: 100%;
-  border-bottom: 2px dashed rgba(255,255,255,0.8);
-  padding: 2rem;
+  border-bottom: none;
+  padding: 2rem 2rem 1rem 2rem;
   background: #000000;
   text-align: center;
 }
@@ -146,17 +188,35 @@ body::before {
 }
 
 /* Project Cards */
-.project-card {
-  border: 2px solid rgba(255,255,255,0.8);
-  padding: 1rem;
-  background: #000000;
-  transition: transform 0.2s ease;
-  cursor: pointer;
-  font-family: 'VT323', monospace;
-}
+@layer components {
+  .project-card {
+    border: 2px solid rgba(255,255,255,0.8);
+    padding: 1rem;
+    background: #000000;
+    transition: transform 0.15s ease-out, opacity 0.3s ease, filter 0.3s ease;
+    cursor: pointer;
+    font-family: 'VT323', monospace;
+    transform-style: preserve-3d;
+    container-type: inline-size;
+    container-name: card;
+  }
 
-.project-card:hover {
-  transform: translate(2px, -2px);
+  .project-card:hover {
+    box-shadow: 0 20px 40px rgba(0, 255, 0, 0.3);
+  }
+
+  /* Dim non-hovered cards using modern :has() selector */
+  .projects-grid:has(.project-card:hover) .project-card:not(:hover) {
+    opacity: 0.6;
+    filter: grayscale(0.3);
+  }
+
+  /* Container queries for responsive cards */
+  @container card (min-width: 400px) {
+    .project-card h2 {
+      font-size: 0.9em;
+    }
+  }
 }
 
 .project-card h2 {
@@ -223,7 +283,6 @@ body.theme-day .route-placeholder:hover {
   width: 100%;
   padding: 2rem;
   background: #000000;
-  border-top: 2px dashed rgba(255,255,255,0.8);
   margin-top: 2rem;
 }
 
@@ -361,8 +420,77 @@ body.theme-day .route-placeholder:hover {
   opacity: 0.6; 
 }
 
-.theme-toggle:is(:not(.is-night)) .toggle-text .label-night { 
-  opacity: 0.6; 
+.theme-toggle:is(:not(.is-night)) .toggle-text .label-night {
+  opacity: 0.6;
+}
+
+/* Sticky Terminal Header */
+.terminal-sticky-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  height: 48px;
+  background: #000000;
+  border-bottom: 2px solid rgba(76, 125, 56, 0.5);
+  color: rgba(106, 168, 79, 0.9);
+  font-family: 'VT323', monospace;
+  font-size: 1.3em;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  gap: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  /* Hidden by default (shows when hero scrolled away) */
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
+  backdrop-filter: none;
+}
+
+.terminal-sticky-header.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.sticky-prompt {
+  color: rgba(106, 168, 79, 0.9);
+}
+
+.sticky-cursor {
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.terminal-sticky-header:hover {
+  background: #0a0a0a;
+  border-bottom-color: rgba(139, 195, 74, 0.7);
+  box-shadow: 0 2px 15px rgba(76, 125, 56, 0.3);
+}
+
+/* Day theme sticky header */
+body.theme-day .terminal-sticky-header {
+  background: #ffffff;
+  border-color: #2d5016;
+  color: #2d5016;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+body.theme-day .sticky-prompt {
+  color: #2d5016;
+}
+
+body.theme-day .terminal-sticky-header:hover {
+  background: #fafafa;
+  border-color: #3a6b1e;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Mobile toggle with pixelated icons */
@@ -415,7 +543,7 @@ body.theme-day::after { background: transparent; }
 body.theme-day .lowtech-container { background: #f4f0e5; border-left: 1px solid rgba(0,0,0,0.1); border-right: 1px solid rgba(0,0,0,0.1); }
 body.theme-day, body.theme-day .header-container, body.theme-day .project-card, body.theme-day .footer-container { background-color: #f4f0e5; }
 body.theme-day .header-container { border-bottom: 2px dashed #1a1a1a; }
-body.theme-day .footer-container { border-top: 2px dashed #1a1a1a; }
+body.theme-day .footer-container { border-top: none; }
 body.theme-day .retro-title { color: #1a1a1a; }
 body.theme-day .typing-text { border-right-color: #1a1a1a; }
 body.theme-day .cursor { background: #1a1a1a; }
@@ -441,7 +569,7 @@ body, .header-container, .project-card, .footer-container {
 body.theme-night, body.theme-night .header-container, body.theme-night .project-card, body.theme-night .footer-container { background-color: #000000; }
 
 /* Footer styles */
-.footer-container { width: 100%; padding: 2rem; background: #000000; border-top: 2px dashed rgba(255,255,255,0.8); margin-top: 2rem; }
+.footer-container { width: 100%; padding: 2rem; background: #000000; margin-top: 2rem; }
 .footer-content { max-width: 80%; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
 .terminal-section { width: 100%; padding: 2rem 0; }
 .terminal-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
@@ -512,5 +640,288 @@ body.theme-night, body.theme-night .header-container, body.theme-night .project-
   
   .title-container {
     gap: 0.5rem;
+  }
+}
+
+/* Konami Code Easter Egg - Matrix Rain Effect */
+@layer animations {
+  @keyframes matrix-rain {
+    0% {
+      transform: translateY(-100vh);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh);
+      opacity: 0;
+    }
+  }
+
+  body.konami-mode::after {
+    content: '01010101 01010101 01010101 01010101 01010101 01010101 01010101 01010101 01010101 01010101';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: #00ff00;
+    font-family: 'VT323', monospace;
+    font-size: 24px;
+    animation: matrix-rain 2s linear;
+    pointer-events: none;
+    z-index: 9999;
+    text-align: center;
+    padding-top: 20vh;
+    line-height: 2;
+  }
+}
+
+/* Unified Terminal - Unix Style */
+@layer components {
+  /* Unix Palette Variables */
+  :root {
+    --unix-bg: #0a0a0a;              /* Near black */
+    --unix-text: #c7c7c7;            /* Dirty white */
+    --unix-text-dim: #8a8a8a;        /* Gray */
+    --unix-accent: #4a7c2c;          /* Dark green accent */
+    --unix-accent-dim: #2d5016;      /* Darker green */
+  }
+
+  body.theme-day {
+    --unix-bg: #f4f0e5;
+    --unix-text: #1a1a1a;
+    --unix-text-dim: #666666;
+    --unix-accent: #2d5016;
+    --unix-accent-dim: #1a3010;
+  }
+
+  /* Unified Terminal - One continuous flow */
+  .terminal-unified {
+    width: 100%;
+    background: #000000;
+    padding: 3rem 2rem 2rem 2rem;
+    min-height: 40vh;
+    background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  body.theme-day .terminal-unified {
+    background-color: #f4f0e5;
+  }
+
+  .terminal-output {
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: 'VT323', monospace;
+    color: var(--unix-text);
+    line-height: 1.6;
+  }
+
+  /* Terminal Title - Centered */
+  .terminal-title-center {
+    text-align: center;
+    font-size: 4em;
+    font-weight: normal;
+    color: var(--unix-text);
+    margin: 0 0 2rem 0;
+    letter-spacing: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .terminal-title-center { font-size: 2.5em; }
+  }
+
+  /* Terminal Boot Line */
+  .terminal-boot-line {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .terminal-prompt {
+    color: var(--unix-accent);
+  }
+
+  .terminal-command {
+    color: var(--unix-text);
+  }
+
+  /* Boot Messages */
+  .terminal-boot-message {
+    color: var(--unix-text-dim);
+    min-height: 30px;
+    margin-bottom: 1rem;
+  }
+
+  /* ASCII Progress Bar */
+  .terminal-progress-ascii {
+    color: var(--unix-text-dim);
+    margin: 1.2rem 0;
+    letter-spacing: 0;
+    font-size: 1.1em;
+  }
+
+  /* OPTION 1: Grid Snap - Cards appear all at once */
+  .projects-grid.grid-snap {
+    animation: grid-snap-in 0.3s ease-out;
+  }
+
+  @keyframes grid-snap-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* OPTION 3: Scanline Reveal - CRT Style */
+  .projects-grid.grid-scanline {
+    position: relative;
+    animation: scanline-reveal 2.5s ease-out;
+  }
+
+  .projects-grid.grid-scanline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--unix-accent) 50%,
+      transparent
+    );
+    box-shadow:
+      0 0 6px rgba(74, 124, 44, 0.5),
+      0 0 12px rgba(74, 124, 44, 0.3);
+    animation: scanline-move 2.5s ease-out;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.85;
+  }
+
+  @keyframes scanline-move {
+    from {
+      top: 0;
+      opacity: 0.85;
+    }
+    to {
+      top: 100%;
+      opacity: 0;
+    }
+  }
+
+  @keyframes scanline-reveal {
+    from {
+      opacity: 0;
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  /* Day theme scanline */
+  body.theme-day .projects-grid.grid-scanline::before {
+    box-shadow: none;
+    opacity: 0.6;
+  }
+
+
+  /* Post-Boot Terminal Content */
+  .terminal-post-boot {
+    animation: terminal-fade-in 0.5s ease-out;
+  }
+
+  .terminal-welcome-message {
+    color: var(--unix-text);
+    font-size: 1.5em;
+    margin: 2rem 0 1.5rem 0;
+    line-height: 1.4;
+  }
+
+  .terminal-welcome-author {
+    color: rgba(76, 125, 56, 0.8);
+  }
+
+  /* Interactive Prompt Line */
+  .terminal-prompt-line {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin: 1.5rem 0 1rem 0;
+  }
+
+  .terminal-input {
+    background: transparent;
+    border: none;
+    color: var(--unix-text);
+    font-family: 'VT323', monospace;
+    font-size: 1em;
+    outline: none;
+    width: 42ch;
+    caret-color: var(--unix-text);
+  }
+
+  .terminal-input:not(:focus) {
+    caret-color: transparent;
+  }
+
+  @media (max-width: 480px) {
+    .terminal-input { width: 28ch; }
+  }
+
+  .terminal-input::placeholder {
+    color: var(--unix-text-dim);
+  }
+
+  .terminal-cursor {
+    animation: blink 1s step-start infinite;
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* Terminal Output Lines */
+  .terminal-output-lines {
+    margin-top: 1rem;
+    color: var(--unix-text-dim);
+    line-height: 1.6;
+  }
+
+  .output-line {
+    margin-bottom: 0.3rem;
+  }
+
+  @keyframes terminal-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Content Hidden During Boot */
+  .content-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Card revealed one by one on first ls */
+  .project-card {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .project-card.card-revealed {
+    opacity: 1;
   }
 }
