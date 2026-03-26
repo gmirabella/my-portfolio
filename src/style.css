@@ -1,5 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+/* VT323 Retro Terminal Font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+/* IBM 3270 Terminal Font - loaded locally */
+@font-face {
+  font-family: 'IBM3270';
+  src: url('/fonts/3270-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* CSS Layers for better organization */
 @layer reset, theme, components, animations, utilities;
@@ -17,8 +26,9 @@
 @layer theme {
   :root {
     /* Modern OKLCH colors (with hex fallbacks) */
+    /* Pure black like shader.se - grain creates the gray effect */
     --color-bg-night: #000000;
-    --color-bg-night-oklch: oklch(10% 0 0);
+    --color-bg-night-oklch: oklch(0% 0 0);
     --color-text-night: #ffffff;
     --color-text-night-oklch: oklch(100% 0 0);
     --color-green-retro: #00ff00;
@@ -53,14 +63,18 @@
 
 /* Base styles */
 body {
-  font-family: 'Courier Prime', monospace;
-  background: #000000;
+  font-family: 'STIX Two Text', 'Courier Prime', serif;
+  background: #000000; /* Pure black like shader.se */
   line-height: 1.6;
   color: #ffffff;
   min-height: 100vh;
   position: relative;
+  /* Enable 3D rendering for CRT bulge effect */
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
 }
 
+/* CRT Screen Effects Layer - Balanced Vignette + Scanlines + Phosphor Glow */
 body::before {
   content: "";
   position: fixed;
@@ -69,11 +83,114 @@ body::before {
   right: 0;
   bottom: 0;
   pointer-events: none;
-  z-index: 1;
-  background: transparent;
+  z-index: 9999;
+  /* Balanced vignette - visible but not overwhelming */
+  background:
+    /* Phosphor glow - green terminal effect */
+    radial-gradient(
+      ellipse at center,
+      rgba(0, 255, 0, 0.05) 0%,
+      transparent 60%
+    ),
+    /* Subtle scanlines */
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 0, 0, 0.15) 2px,
+      rgba(0, 0, 0, 0.15) 3px
+    ),
+    /* Moderate vignette - dark corners but readable content */
+    radial-gradient(
+      ellipse 85% 75% at center,
+      transparent 0%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.3) 75%,
+      rgba(0, 0, 0, 0.6) 95%,
+      rgba(0, 0, 0, 0.75) 100%
+    );
+}
+
+/* Noise grain overlay - visible film grain effect like shader.se */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.35; /* Slightly reduced grain */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='4.5' numOctaves='6' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-size: 150px 150px;
+  /* No animation - static grain */
+  mix-blend-mode: screen; /* Screen blend makes it visible on black */
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -25%); }
+  40% { transform: translate(-5%, 25%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 15%); }
+  80% { transform: translate(3%, 35%); }
+  90% { transform: translate(-10%, 10%); }
 }
 
 /* VHS global overlay - removed */
+
+/* CRT Bulge Effect - Balanced terminal curvature */
+#app {
+  /* Moderate inner shadow for glass depth */
+  box-shadow:
+    inset 0 0 60px rgba(0, 0, 0, 0.4),
+    inset 0 0 120px rgba(0, 0, 0, 0.25),
+    inset 0 0 200px rgba(0, 0, 0, 0.15),
+    /* Green phosphor glow from edges */
+    inset 0 0 80px rgba(0, 255, 0, 0.08);
+  /* Subtle border radius for curved glass */
+  border-radius: 12px;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  /* Anti-aliasing for smoother rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Slight margin for bezel effect */
+  margin: 10px;
+  overflow: hidden;
+}
+
+/* Day theme adjustments for CRT effects */
+body.theme-day::before {
+  background:
+    /* Subtle scanlines for day mode */
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 0, 0, 0.08) 2px,
+      rgba(0, 0, 0, 0.08) 3px
+    ),
+    /* Moderate vignette for day mode */
+    radial-gradient(
+      ellipse 85% 75% at center,
+      transparent 0%,
+      transparent 55%,
+      rgba(0, 0, 0, 0.2) 80%,
+      rgba(0, 0, 0, 0.4) 95%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+}
+
+body.theme-day::after {
+  opacity: 0.4; /* Visible grain in day mode */
+  mix-blend-mode: multiply; /* Darken blend for light backgrounds */
+}
 
 /* Container styles */
 .lowtech-container {
@@ -114,11 +231,12 @@ body::before {
 
 /* Terminal Title Styles */
 .retro-title {
-  font-family: 'VT323', monospace;
+  font-family: 'Courier New', 'Courier', monospace;
   font-size: 3em;
   color: #ffffff;
   position: relative;
-  letter-spacing: 2px;
+  letter-spacing: 0.5px;
+  font-weight: 600;
 }
 
 .cursor {
@@ -195,7 +313,7 @@ body::before {
     background: #000000;
     transition: transform 0.15s ease-out, opacity 0.3s ease, filter 0.3s ease;
     cursor: pointer;
-    font-family: 'VT323', monospace;
+    font-family: 'Courier New', 'Courier', monospace;
     transform-style: preserve-3d;
     container-type: inline-size;
     container-name: card;
@@ -214,23 +332,25 @@ body::before {
   /* Container queries for responsive cards */
   @container card (min-width: 400px) {
     .project-card h2 {
-      font-size: 0.9em;
+      font-size: 1.6em;
     }
   }
 }
 
 .project-card h2 {
-  font-family: "Press Start 2P", monospace;
-  font-size: 0.8em;
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 1.4em; /* Much larger title */
   margin-bottom: 1.2rem;
-  line-height: 1.5;
-  font-weight: 400;
+  line-height: 1.3;
+  font-weight: 700; /* Bold for emphasis */
+  text-transform: uppercase; /* Terminal style */
+  letter-spacing: 0.5px;
 }
 
 .project-description {
-  font-family: 'Courier Prime', monospace;
-  font-size: 0.9em;
-  line-height: 1.4;
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 0.85em; /* Smaller than title */
+  line-height: 1.5;
 }
 
 .media-container {
@@ -254,7 +374,7 @@ body::before {
   background: rgba(255, 255, 255, 0.05);
   border: 2px dashed rgba(255, 255, 255, 0.3);
   color: rgba(255, 255, 255, 0.7);
-  font-family: 'VT323', monospace;
+  font-family: 'Courier New', 'Courier', monospace;
   font-size: 1.5em;
   letter-spacing: 2px;
   transition: all 0.2s ease;
@@ -307,7 +427,7 @@ body.theme-day .route-placeholder:hover {
   gap: 0.5rem;
   color: #ffffff;
   text-decoration: none;
-  font-family: 'VT323', monospace;
+  font-family: 'Courier New', 'Courier', monospace;
   padding: 0.5rem;
   transition: background-color 0.2s ease;
 }
@@ -323,7 +443,7 @@ body.theme-day .route-placeholder:hover {
 /* Sustainability Info */
 .sustainability-info {
   text-align: center;
-  font-family: 'VT323', monospace;
+  font-family: 'Courier New', 'Courier', monospace;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding-top: 0.5rem;
 }
@@ -342,10 +462,10 @@ body.theme-day .route-placeholder:hover {
 .header-container { width: 100%; border-bottom: 2px dashed rgba(255,255,255,0.8); padding: 2rem; background: #000000; text-align: center; }
 .header-content { display: flex; justify-content: center; align-items: center; max-width: 80%; margin: 0 auto; width: 100%; }
 .title-container { display: flex; flex-direction: column; gap: 1rem; align-items: center; }
-.retro-title { font-family: 'VT323', monospace; font-size: 5em; color: #ffffff; letter-spacing: 1px; position: relative; }
+.retro-title { font-family: 'Courier New', 'Courier', monospace; font-size: 5em; color: #ffffff; letter-spacing: 0.5px; position: relative; font-weight: 600; }
 .cursor { display: inline-block; width: 12px; height: 24px; background: #ffffff; margin-left: 4px; animation: blink 1s step-start infinite; }
 @keyframes blink { 50% { opacity: 0; } }
-.subtitle { display: flex; flex-direction: column; gap: 0.5rem; font-family: 'VT323', monospace; font-size: 1.5em; letter-spacing: 1px; }
+.subtitle { display: flex; flex-direction: column; gap: 0.5rem; font-family: 'Courier New', 'Courier', monospace; font-size: 1.5em; letter-spacing: 1px; }
 .typing-text { display: inline-block; overflow: hidden; border-right: 2px solid #ffffff; white-space: nowrap; animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite; margin: 0; }
 .typing-text:nth-child(2) { animation-delay: 3.5s; }
 .typing-text:nth-child(3) { animation-delay: 7s; }
@@ -397,7 +517,7 @@ body.theme-day .route-placeholder:hover {
 }
 
 .theme-toggle .toggle-text { 
-  font-family: 'VT323', monospace; 
+  font-family: 'Courier New', 'Courier', monospace; 
   font-size: 14px; 
   letter-spacing: 1px; 
   color: #ffffff; 
@@ -435,7 +555,7 @@ body.theme-day .route-placeholder:hover {
   background: #000000;
   border-bottom: 2px solid rgba(76, 125, 56, 0.5);
   color: rgba(106, 168, 79, 0.9);
-  font-family: 'VT323', monospace;
+  font-family: 'Courier New', 'Courier', monospace;
   font-size: 1.3em;
   cursor: pointer;
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -573,8 +693,8 @@ body.theme-night, body.theme-night .header-container, body.theme-night .project-
 .footer-content { max-width: 80%; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
 .terminal-section { width: 100%; padding: 2rem 0; }
 .terminal-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
-.terminal-link { display: flex; align-items: center; gap: 0.5rem; color: #ffffff; text-decoration: none; font-family: 'VT323', monospace; font-size: 1.1em; padding: 0.5rem; position: relative; overflow: hidden; }
-.terminal-icon { font-family: monospace; opacity: 0.7; }
+.terminal-link { display: flex; align-items: center; gap: 0.5rem; color: #ffffff; text-decoration: none; font-family: 'Courier New', 'Courier', monospace; font-size: 1.1em; padding: 0.5rem; position: relative; overflow: hidden; }
+.terminal-icon { font-family: 'Courier New', 'Courier', monospace; opacity: 0.7; }
 .terminal-text { letter-spacing: 1px; position: relative; transition: all 0.2s ease; }
 .terminal-text::before { content: attr(data-text); position: absolute; left: -2px; text-shadow: 2px 0 #ff0000; top: 0; color: #ffffff; background: #000000; overflow: hidden; clip: rect(0, 900px, 0, 0); animation: noise-anim-2 3s infinite linear alternate-reverse; }
 .terminal-text::after { content: attr(data-text); position: absolute; left: 2px; text-shadow: -2px 0 #00ff00; top: 0; color: #ffffff; background: #000000; overflow: hidden; clip: rect(0, 900px, 0, 0); animation: noise-anim 2s infinite linear alternate-reverse; }
@@ -587,7 +707,7 @@ body.theme-night, body.theme-night .header-container, body.theme-night .project-
 @keyframes noise-anim-2 { 0% { clip: rect(16px, 9999px, 10px, 0); } 5% { clip: rect(75px, 9999px, 35px, 0); } 10% { clip: rect(27px, 9999px, 89px, 0); } 15% { clip: rect(89px, 9999px, 55px, 0); } 20% { clip: rect(75px, 9999px, 15px, 0); } 25% { clip: rect(45px, 9999px, 66px, 0); } 30% { clip: rect(85px, 9999px, 85px, 0); } 35% { clip: rect(40px, 9999px, 29px, 0); } 40% { clip: rect(45px, 9999px, 23px, 0); } 45% { clip: rect(69px, 9999px, 85px, 0); } 50% { clip: rect(50px, 9999px, 85px, 0); } 55% { clip: rect(26px, 9999px, 45px, 0); } 60% { clip: rect(90px, 9999px, 76px, 0); } 65% { clip: rect(20px, 9999px, 35px, 0); } 70% { clip: rect(45px, 9999px, 26px, 0); } 75% { clip: rect(92px, 9999px, 75px, 0); } 80% { clip: rect(60px, 9999px, 25px, 0); } 85% { clip: rect(89px, 9999px, 81px, 0); } 90% { clip: rect(96px, 9999px, 55px, 0); } 95% { clip: rect(21px, 9999px, 42px, 0); } 100% { clip: rect(69px, 9999px, 35px, 0); } }
 
 /* Projects typography */
-.project-description { font-family: 'VT323', monospace; font-size: 1.3em; line-height: 1.3; letter-spacing: 0.5px; font-weight: normal; }
+.project-description { font-family: 'Courier New', 'Courier', monospace; font-size: 1.3em; line-height: 1.3; letter-spacing: 0.5px; font-weight: normal; }
 .media-container { margin: 1rem 0; cursor: pointer; }
 .poster-image, .video-frame { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
 
@@ -664,7 +784,7 @@ body.theme-night, body.theme-night .header-container, body.theme-night .project-
     width: 100%;
     height: 100%;
     color: #00ff00;
-    font-family: 'VT323', monospace;
+    font-family: 'Courier New', 'Courier', monospace;
     font-size: 24px;
     animation: matrix-rain 2s linear;
     pointer-events: none;
@@ -710,9 +830,10 @@ body.theme-night, body.theme-night .header-container, body.theme-night .project-
   .terminal-output {
     max-width: 900px;
     margin: 0 auto;
-    font-family: 'VT323', monospace;
+    font-family: 'Courier New', 'Courier', monospace;
     color: var(--unix-text);
     line-height: 1.6;
+    text-align: center; /* Center all content */
   }
 
   /* Terminal Title - Centered */
@@ -723,6 +844,7 @@ body.theme-night, body.theme-night .header-container, body.theme-night .project-
     color: var(--unix-text);
     margin: 0 0 2rem 0;
     letter-spacing: 2px;
+    font-family: 'VT323', monospace; /* Retro terminal font for title */
   }
 
   @media (max-width: 768px) {
@@ -734,6 +856,7 @@ body.theme-night, body.theme-night .header-container, body.theme-night .project-
     display: flex;
     gap: 0.5rem;
     margin-bottom: 1rem;
+    justify-content: center; /* Center the flex items */
   }
 
   .terminal-prompt {
@@ -860,7 +983,7 @@ body.theme-night, body.theme-night .header-container, body.theme-night .project-
     background: transparent;
     border: none;
     color: var(--unix-text);
-    font-family: 'VT323', monospace;
+    font-family: 'Courier New', 'Courier', monospace;
     font-size: 1em;
     outline: none;
     width: 42ch;

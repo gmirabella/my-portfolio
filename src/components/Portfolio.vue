@@ -324,7 +324,7 @@ const handleMediaClick = (project: Project) => {
     <header class="terminal-unified" ref="headerRef">
       <div class="terminal-output">
         <!-- Title (always visible, centered) -->
-        <h1 class="terminal-title-center">/usr/grza@portfolio</h1>
+        <h1 class="terminal-title-center">grza@portfolio:~$</h1>
 
         <!-- Boot sequence -->
         <div class="terminal-boot-line">
