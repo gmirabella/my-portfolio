@@ -5,7 +5,7 @@
         <span class="prompt-text">grza@portfolio:~$</span>
         <input ref="inputField" v-model="currentInput" @keydown.enter="executeCommand" @keydown.up="navigateHistory(-1)"
           @keydown.down="navigateHistory(1)" @keydown.tab.prevent="autocomplete" class="terminal-input"
-          placeholder="type 'help' or 'ls' to explore..." spellcheck="false" />
+          placeholder="type 'help' to explore..." spellcheck="false" />
         <span class="cursor">_</span>
       </div>
 
@@ -56,18 +56,20 @@ const randomWelcome = welcomeMessages[Math.floor(Math.random() * welcomeMessages
 
 const outputLines = ref<string[]>([
   `<span style="color: rgba(106, 168, 79, 0.9)">${randomWelcome}</span>`,
-  '<span style="color: rgba(76, 125, 56, 0.6)">Type \'help\' or \'ls\' to explore</span>'
+  '<span style="color: rgba(76, 125, 56, 0.6)">Type \'help\' to explore</span>'
 ])
 
 // Commands implementation
 const commands: Record<string, (args: string[]) => string[]> = {
   help: () => [
     '<span style="color: rgba(106, 168, 79, 0.9)">Available commands:</span>',
-    '  <span style="color: rgba(139, 195, 74, 0.85)">ls</span>           List all projects',
-    '  <span style="color: rgba(139, 195, 74, 0.85)">whoami</span>       About me',
-    '  <span style="color: rgba(139, 195, 74, 0.85)">skills</span>       Technical skills & experience',
-    '  <span style="color: rgba(139, 195, 74, 0.85)">cat resume</span>   View resume',
-    '  <span style="color: rgba(139, 195, 74, 0.85)">clear</span>        Clear terminal',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">ls</span>            List all projects',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">whoami</span>        About me',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">skills</span>        Technical skills & experience',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">education</span>     Studies & degree',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">certification</span> Certifications',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">cat resume</span>    View resume',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">clear</span>         Clear terminal',
     '',
     '<span style="color: rgba(76, 125, 56, 0.6)">Tip: Press Ctrl+K for full terminal mode</span>',
     ''
@@ -105,11 +107,29 @@ const commands: Record<string, (args: string[]) => string[]> = {
     '  <span style="color: rgba(139, 195, 74, 0.85)">Current:</span>      Technical Delivery Manager @ AKQA (2022-Now)',
     '  <span style="color: rgba(139, 195, 74, 0.85)">Previous:</span>     Full-Stack Engineer @ Cuebiq (2019-2022)',
     '                Solution Engineer @ SopraSteria, Accenture',
-    '',
+    ''
+  ],
+
+  education: () => [
     '<span style="color: rgba(106, 168, 79, 0.9)">Education:</span>',
+    '',
     '  <span style="color: rgba(139, 195, 74, 0.85)">Degree:</span>       Computer Science for New Media Communications',
     '  <span style="color: rgba(139, 195, 74, 0.85)">University:</span>   University of Milan',
     '  <span style="color: rgba(139, 195, 74, 0.85)">Thesis:</span>       Cognitive Rehabilitation through motion sensors',
+    ''
+  ],
+
+  certification: () => [
+    '<span style="color: rgba(106, 168, 79, 0.9)">Certifications:</span>',
+    '',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">oct 2025</span>  IBM Specialization: RAG and Agentic AI',
+    '             IBM',
+    '',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">sep 2024</span>  Ayurvedic Holistic Operator',
+    '             A.I.O.C. Italia - Accademia Istruttori e Operatori Certificati',
+    '',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">dec 2020</span>  Software Development Process and Methodologies',
+    '             University of Minnesota — Coursera',
     ''
   ],
 

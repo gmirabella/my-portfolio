@@ -147,13 +147,14 @@ const outputLines = ref<string[]>([])
 const commands: Record<string, (args: string[]) => string[]> = {
   help: () => [
     '<span style="color: #8a8a8a">Available commands:</span>',
-    '  ls           List all projects',
-    '  whoami       About me',
-    '  skills       Technical skills',
-    '  experience   Work experience',
-    '  education    Studies & certifications',
-    '  cat resume   View resume',
-    '  clear        Clear terminal',
+    '  ls            List all projects',
+    '  whoami        About me',
+    '  skills        Technical skills',
+    '  experience    Work experience',
+    '  education     Studies & degree',
+    '  certification Certifications',
+    '  cat resume    View resume',
+    '  clear         Clear terminal',
     ''
   ],
 
@@ -194,7 +195,16 @@ const commands: Record<string, (args: string[]) => string[]> = {
   ],
 
   education: () => [
-    '<span style="color: #8a8a8a">Education & Certifications:</span>',
+    '<span style="color: #8a8a8a">Education:</span>',
+    '',
+    '  <span style="color: #4a7c2c">Degree:</span>       Computer Science for New Media Communications',
+    '  <span style="color: #4a7c2c">University:</span>   University of Milan',
+    '  <span style="color: #4a7c2c">Thesis:</span>       Cognitive Rehabilitation through motion sensors',
+    ''
+  ],
+
+  certification: () => [
+    '<span style="color: #8a8a8a">Certifications:</span>',
     '',
     '  <span style="color: #4a7c2c">oct 2025</span>  IBM Specialization: RAG and Agentic AI',
     '             IBM',

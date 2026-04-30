@@ -41,14 +41,15 @@ const terminalBody = ref<HTMLDivElement>()
 const commands: Record<string, (args: string[]) => string[]> = {
   help: () => [
     '<span style="color: rgba(106, 168, 79, 0.9)">Available commands:</span>',
-    '  ls           List all projects',
-    '  whoami       About me',
-    '  skills       Technical skills',
-    '  experience   Work experience',
-    '  education    Studies & certifications',
-    '  cat resume   View resume',
-    '  clear        Clear terminal',
-    '  exit         Close terminal',
+    '  ls            List all projects',
+    '  whoami        About me',
+    '  skills        Technical skills',
+    '  experience    Work experience',
+    '  education     Studies & degree',
+    '  certification Certifications',
+    '  cat resume    View resume',
+    '  clear         Clear terminal',
+    '  exit          Close terminal',
     ''
   ],
 
@@ -93,7 +94,16 @@ const commands: Record<string, (args: string[]) => string[]> = {
   ],
 
   education: () => [
-    '<span style="color: rgba(106, 168, 79, 0.9)">Education & Certifications:</span>',
+    '<span style="color: rgba(106, 168, 79, 0.9)">Education:</span>',
+    '',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">Degree:</span>       Computer Science for New Media Communications',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">University:</span>   University of Milan',
+    '  <span style="color: rgba(139, 195, 74, 0.85)">Thesis:</span>       Cognitive Rehabilitation through motion sensors',
+    ''
+  ],
+
+  certification: () => [
+    '<span style="color: rgba(106, 168, 79, 0.9)">Certifications:</span>',
     '',
     '  <span style="color: rgba(139, 195, 74, 0.85)">oct 2025</span>  IBM Specialization: RAG and Agentic AI',
     '             IBM',
