@@ -50,3 +50,8 @@ coverage/
 
 # Vue specific
 *.bak
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
